@@ -33,7 +33,7 @@ CKEDITOR.dialog.add(pluginName, function(editor) {
             var className = getClassName(options);
             if (preElement) {
                 preElement.setAttribute("class", className);
-                preElement.setText(options.code);
+                preElement.setText(options.code || "");
             } else {
                 preElement = new CKEDITOR.dom.element("pre", editor.document);
                 preElement.setAttribute("class", className);
@@ -48,11 +48,12 @@ CKEDITOR.dialog.add(pluginName, function(editor) {
                 elements: [
                     {
                         type: "textarea",
-                        id: "insert_code_textarea",
+                        id: "insertcode_textarea",
+                        className: "insertcode_textarea",
                         rows: 15,
                         style: "width: 100%",
                         setup: function(editor) {
-                            if (editor.code) this.setValue(editor.code);
+                            this.setValue(editor.code || "");
                         },
                         commit: function(editor) {
                             editor.code = this.getValue();
@@ -72,13 +73,14 @@ var defaults = function() {
     };
 };
 
-function unescapeHTML(str) {
-    return str.replace(/<br>/g, "\n")
-              .replace(/&amp;/g, "&")
-              .replace(/&lt;/g, "<")
-              .replace(/&gt;/g, ">")
-              .replace(/&#39;/g, "'")
-              .replace(/&quot;/g, '"');
+function unescapeHTML(html) {
+    return html.replace(/&amp;/gi, "&")
+              .replace(/&lt;/gi, "<")
+              .replace(/&gt;/gi, ">")
+              .replace(/&nbsp;/gi, " ")
+              .replace(/&apos;/gi, "'")
+              .replace(/&quot;/gi, '"')
+              .replace(/<br(\s*\/)?>/gi, "\n");
 }
 
 function getClassName(options) {
