@@ -15,6 +15,12 @@ CKEDITOR.plugins.add(pluginName, {
             icon: this.path + 'images/icon.gif'
         });
         CKEDITOR.dialog.add(pluginName, this.path + "dialogs/" + pluginName + ".js")
+        editor.on('doubleclick', function(e) {
+            var element = e.data.element;
+            if (element.getAscendant('pre', true)) {
+                e.data.dialog = 'insertcode';
+            }
+        });
     }
 });
 

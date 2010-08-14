@@ -5,6 +5,7 @@ var pluginName = "insertcode";
 CKEDITOR.dialog.add(pluginName, function(editor) {
     return {
         title: editor.lang[pluginName].label,
+        resizable: CKEDITOR.DIALOG_RESIZE_BOTH,
         minWidth: 500,
         minHeight: 300,
         onShow: function() {
@@ -34,7 +35,7 @@ CKEDITOR.dialog.add(pluginName, function(editor) {
                 preElement.setAttribute("class", className);
                 preElement.setText(options.code);
             } else {
-                preElement = new CKEDITOR.dom.element("pre");
+                preElement = new CKEDITOR.dom.element("pre", editor.document);
                 preElement.setAttribute("class", className);
                 preElement.setText(options.code);
                 editor.insertElement(preElement);
@@ -48,7 +49,7 @@ CKEDITOR.dialog.add(pluginName, function(editor) {
                     {
                         type: "textarea",
                         id: "insert_code_textarea",
-                        rows: 22,
+                        rows: 15,
                         style: "width: 100%",
                         setup: function(editor) {
                             if (editor.code) this.setValue(editor.code);
@@ -65,6 +66,7 @@ CKEDITOR.dialog.add(pluginName, function(editor) {
 
 var defaults = function() {
     return {
+        linenums: 1,
         lang: null,
         code: ""
     };
@@ -82,14 +84,18 @@ function unescapeHTML(str) {
 function getClassName(options) {
     var className = "prettyprint";
     if (options.lang) className += " lang-" + options.lang.toLowerCase();
+    if (options.linenums) className += " linenums:" + options.linenums;
     return className;
 }
 
 function getOptions(className) {
     var options = defaults();
-    var match = className.match(/lang-([a-z]+)/)
+    if (!className) return options;
+    var match = className.match(/lang-([a-z]+)/);
     if (match) options.lang = match[1].toLowerCase();
-    return defaults;
+    var match = className.match(/linenums:([0-9]+)/);
+    if (match) options.linenums = match[1];
+    return options;
 }
 
 })();
